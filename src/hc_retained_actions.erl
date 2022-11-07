@@ -4,8 +4,9 @@
 
 -export([
     init/1
-  , publish/1
-%   , store/1
+  % , publish/1
+  , store/1
+  , retained/1
   ,put_chat/1
   ,get_chat/0
   ,get_chat/1
@@ -46,7 +47,7 @@ init([]) ->
     },
     {ok, TableDefs}.
 
-publish(Message) ->
+store(Message) ->
     io:format("Message publish EMQX : ~p",[Message]),       %published by emqx payload
     MsgCheck = element(8,Message),
     case MsgCheck of
@@ -76,3 +77,25 @@ publish(Message) ->
             put_chat(ChatOutput)
         
         end.
+
+retained(Topic) ->
+  A = get_chat(#{topic => Topic, status => <<"undelivered">>}),
+  case A of
+    [] ->
+      ok;
+    _ ->
+      messages(Topic,A)
+    end.
+
+messages(_,[]) ->
+  ok;
+messages(Topic,[H|T]) ->
+  Message = element(5,H),
+  Data = emqx_message:make(Topic,Message),
+  % emqx:publish(Data),
+  io:format("~nData - ~p ~n",[Data]),
+  messages(Topic,T).
+
+
+
+

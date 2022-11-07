@@ -49,10 +49,13 @@ unload() ->
 
 
 on_session_subscribed(#{clientid := ClientId}, Topic, SubOpts, _Env) ->
-    io:format("~n ------Session(~s) subscribed ~s with subopts: ~p~n", [ClientId, Topic, SubOpts]).
-    % case hc_retained_actions:get_chat(#{topic => Topic, }) of
-    %     [_] ->
-    %         hc_retained_actions:
+    io:format("~n ------Session(~s) subscribed ~p with subopts: ~p~n", [ClientId, Topic, SubOpts]),
+    case hc_retained_actions:get_chat(#{topic => Topic, status => <<"undelivered">> }) of
+        [_] ->
+            hc_retained_actions:retained(Topic);
+        [] ->
+            ok
+        end.
 
 
 % on_session_subscribed(_, _, #{share := ShareName}, _Env) when ShareName =/= undefined ->
@@ -75,7 +78,7 @@ on_message_publish(Message = #message{topic = <<"$SYS/", _/binary>>}, _Env) ->
 on_message_publish(Message, _Env) ->
     % io:format("Publish ~s~n", [emqx_message:format(Message)]),
     % io:format("-------------home ---~nPublish ~s~n", [Message]),
-    hc_retained_actions:publish(Message),
+    hc_retained_actions:store(Message),
     {ok, Message}.
 
 
