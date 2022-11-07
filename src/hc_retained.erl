@@ -49,6 +49,7 @@ unload() ->
 
 
 on_session_subscribed(#{clientid := ClientId}, Topic, SubOpts, _Env) ->
+    
     io:format("Session(~s) subscribed ~s with subopts: ~p~n", [ClientId, Topic, SubOpts]).
 
 
