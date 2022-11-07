@@ -4,7 +4,7 @@
 
 -export([
     init/1
-%   , publish/1
+  , publish/1
 %   , store/1
   ,put_chat/1
   ,get_chat/0
@@ -45,3 +45,34 @@ init([]) ->
         % topic => #{colums => #{}}
     },
     {ok, TableDefs}.
+
+publish(Message) ->
+    io:format("Message publish EMQX : ~p",[Message]),       %published by emqx payload
+    MsgCheck = element(8,Message),
+    case MsgCheck of
+        <<"Connection Closed abnormally..!">> ->
+            io:format("\nmqtt client closed successfully...!\n");
+        _ ->
+            io:format("~n ------- checking jsx ----- ~n"),
+            % DecodedMessage= [element(2,hd(jsx:decode(element(8,Message))))],
+            DecodedMessage = jsx:decode(element(8,Message)),
+            io:format("sent message publish : ~p ~n",[DecodedMessage]),
+            Topic = proplists:get_value(<<"to_id">>,DecodedMessage),
+            io:format("to_id => ~p~n", [Topic]),
+            From = proplists:get_value(<<"from">>,DecodedMessage),
+            Message1 = proplists:get_value(<<"message">>,DecodedMessage),
+            %change
+            Message2 = hc_retained_utils:encrypt(Message1),
+            % --
+            Date = proplists:get_value(<<"time">>,DecodedMessage),
+            %emqx_hoolva_chat_utils:self_message(Topic,Message1,DecodedMessage),
+            Qos = proplists:get_value(<<"qos">>, DecodedMessage),
+            ChatOutput = #{topic => Topic
+                        , from_id => From
+                        , message => Message2
+                        , time => Date
+                        , qos => Qos
+                    },
+            put_chat(ChatOutput)
+        
+        end.

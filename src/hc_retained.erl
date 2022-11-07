@@ -49,8 +49,19 @@ unload() ->
 
 
 on_session_subscribed(#{clientid := ClientId}, Topic, SubOpts, _Env) ->
-    
-    io:format("Session(~s) subscribed ~s with subopts: ~p~n", [ClientId, Topic, SubOpts]).
+    io:format("~n ------Session(~s) subscribed ~s with subopts: ~p~n", [ClientId, Topic, SubOpts]).
+    % case hc_retained_actions:get_chat(#{topic => Topic, }) of
+    %     [_] ->
+    %         hc_retained_actions:
+
+
+% on_session_subscribed(_, _, #{share := ShareName}, _Env) when ShareName =/= undefined ->
+%     ok;
+% on_session_subscribed(_, Topic, #{rh := Rh, is_new := IsNew}, _Env) ->
+%     case Rh =:= 0 orelse (Rh =:= 1 andalso IsNew) of
+%         true -> emqx_pool:async_submit(fun dispatch/2, [self(), Topic]);
+%         _ -> ok
+%     end.
 
 
 on_message_delivered(_ClientInfo = #{clientid := ClientId}, Message, _Env) ->
@@ -62,7 +73,52 @@ on_message_publish(Message = #message{topic = <<"$SYS/", _/binary>>}, _Env) ->
     {ok, Message};
 
 on_message_publish(Message, _Env) ->
-    io:format("Publish ~s~n", [emqx_message:format(Message)]),
+    % io:format("Publish ~s~n", [emqx_message:format(Message)]),
     % io:format("-------------home ---~nPublish ~s~n", [Message]),
-    % emqx_hoolva_chat_actions:publish(Message),
+    hc_retained_actions:publish(Message),
     {ok, Message}.
+
+
+    
+% %----- on session subscribed -- subs ---
+
+% topic2tokens(Topic) ->
+%     emqx_topic:words(Topic).
+
+% dispatch(Pid, Topic) ->
+%     Msgs = case emqx_topic:wildcard(Topic) of
+%                false -> read_messages(Topic);
+%                true  -> match_messages(Topic)
+%            end,
+%     [Pid ! {deliver, Topic, Msg} || Msg  <- sort_retained(Msgs)].
+
+
+% -spec(read_messages(emqx_types:topic())
+%       -> [emqx_types:message()]).
+% read_messages(Topic) ->
+%     Tokens = topic2tokens(Topic),
+%     case mnesia:dirty_read(?TAB, Tokens) of
+%         [] -> [];
+%         [#retained{msg = Msg, expiry_time = Et}] ->
+%             case Et =:= 0 orelse Et >= erlang:system_time(millisecond) of
+%                 true -> [Msg];
+%                 false -> []
+%             end
+%     end.
+
+% -spec(match_messages(emqx_types:topic())
+%       -> [emqx_types:message()]).
+% match_messages(Filter) ->
+%     NowMs = erlang:system_time(millisecond),
+%     Cond = condition(emqx_topic:words(Filter)),
+%     MsHd = #retained{topic = Cond, msg = '$2', expiry_time = '$3'},
+%     Ms = [{MsHd, [{'=:=','$3',0}], ['$2']},
+%           {MsHd, [{'>','$3',NowMs}], ['$2']}],
+%     mnesia:dirty_select(?TAB, Ms).
+
+% sort_retained([]) -> [];
+% sort_retained([Msg]) -> [Msg];
+% sort_retained(Msgs)  ->
+%     lists:sort(fun(#message{timestamp = Ts1}, #message{timestamp = Ts2}) ->
+%                    Ts1 =< Ts2
+%                end, Msgs).
