@@ -1,0 +1,14 @@
+{application, hc_retained,
+ [{description, "EMQ X Plugin Template"},
+  {vsn, "git"},
+  {modules, []},
+  {registered, [hc_retained_sup]},
+  {applications, [kernel,stdlib,jsx,tivan]},
+  {mod, {hc_retained_app,[]}},
+  {env, []},
+  {licenses, ["Apache-2.0"]},
+  {maintainers, ["EMQ X Team <contact@emqx.io>"]},
+  {links, [{"Homepage", "https://emqx.io/"},
+           {"Github", "https://github.com/emqx/emqx-plugin-template"}
+          ]}
+ ]}.
