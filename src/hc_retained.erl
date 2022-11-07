@@ -6,12 +6,12 @@
 % -include_lib("emqx/include/emqx.hrl").
 % -include_lib("emqx/include/logger.hrl").
 -include("emqx.hrl").
--include("logger.hrl").             %change to above code when connected to server
+% -include("logger.hrl").             %change to above code when connected to server
 % -include_lib("stdlib/include/ms_transform.hrl").
 -include_lib("stdlib-3.17.2.1/include/ms_transform.hrl").
 
 
--logger_header("[HC_Retained]").
+% -logger_header("[HC_Retained]").
 
 % -export([start_link/1]).
 
