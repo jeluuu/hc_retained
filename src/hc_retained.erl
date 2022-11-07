@@ -1,4 +1,4 @@
--module(emqx_retainer).
+-module(hc_retained).
 
 -behaviour(gen_server).
 
