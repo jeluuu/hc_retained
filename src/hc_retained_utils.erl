@@ -13,4 +13,5 @@ decrypt(Message) ->
 
 % Length of the list
 num(L) ->
-    length([X || X <- L, X < 1]).
+    lists:foldl(fun(X,Count) when X < 1 -> Count+1; (_,Count) -> Count end,0,L).
+    % length([X || X <- L, X < 1]).
