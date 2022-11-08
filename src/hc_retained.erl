@@ -79,7 +79,7 @@ on_message_delivered(_ClientInfo = #{clientid := ClientId}, Message, _Env) ->
 on_message_publish(Message = #message{topic = <<"$SYS/", _/binary>>}, _Env) ->
     {ok, Message};
 
-on_message_publish(Message = #message{flags = #{}, headers = #{}}, _Env) ->
+on_message_publish(Message = #message{headers = #{}}, _Env) ->
     io:format("~n ----- task ------- ~n"),
     {ok,Message};
 
