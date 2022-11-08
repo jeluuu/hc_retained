@@ -54,7 +54,7 @@ init([]) ->
     {ok, TableDefs}.
 
 store(Message) ->
-    io:format("Message publish EMQX : ~p",[Message]),       %published by emqx payload
+    io:format("~nMessage publish EMQX : ~p",[Message]),       %published by emqx payload
     MsgCheck = element(8,Message),
     case MsgCheck of
         <<"Connection Closed abnormally..!">> ->

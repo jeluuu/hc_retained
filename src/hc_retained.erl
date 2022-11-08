@@ -99,7 +99,7 @@ on_message_publish(Message, _Env) ->
             % io:format("~n ----- task ------- ~n~p ~n P = ~p~n",[Message,P]),
             {ok,Message};
         false ->
-            io:format("~nrecieved on published message ~p",[Message]),
+            io:format("~nrecieved on published message"),
             % io:format("-------------home ---~nPublish = ~p~n", [Message]),
             hc_retained_actions:store(Message),
             {ok, Message}
