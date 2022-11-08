@@ -92,8 +92,11 @@ messages(_,[]) ->
 messages(Topic,[H|T]) ->
   % Message = element(5,H),
   P = maps:get(message, H),
+  Qos1 = maps:get(qos, H),
+  From1 = maps:get(from_id, H),
   Message = hc_retained_utils:decrypt(P),
-  Data = emqx_message:make(Topic,Message),
+  % Data = emqx_message:make(Topic,Message),
+  Data = emqx_message:make(From1,Qos1,Topic,Message),
   emqx:publish(Data),
   io:format("~nData - ~p ~n",[Data]),
   messages(Topic,T).
