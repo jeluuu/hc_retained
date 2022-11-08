@@ -94,7 +94,7 @@ messages(Topic,[H|T]) ->
   P = maps:get(message, H),
   Message = hc_retained_utils:decrypt(P),
   Data = emqx_message:make(Topic,Message),
-  % emqx:publish(Data),
+  emqx:publish(Data),
   io:format("~nData - ~p ~n",[Data]),
   messages(Topic,T).
 
