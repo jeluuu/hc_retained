@@ -90,7 +90,9 @@ retained(Topic) ->
 messages(_,[]) ->
   ok;
 messages(Topic,[H|T]) ->
-  Message = element(5,H),
+  % Message = element(5,H),
+  P = maps:get(message, H),
+  Message = hc_retained_utils:decrypt(P),
   Data = emqx_message:make(Topic,Message),
   % emqx:publish(Data),
   io:format("~nData - ~p ~n",[Data]),
