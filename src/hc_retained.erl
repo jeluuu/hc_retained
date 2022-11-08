@@ -56,7 +56,8 @@ on_session_subscribed(#{clientid := ClientId}, Topic, SubOpts, _Env) ->
         [] ->
             io:format("~nno undelivered messsage found");
         C ->
-            io:format("~n~n ~p",[C]),
+            List_length = hc_retained_utils:num(C),
+            io:format("~n ~p undelivered message found",[List_length]),
             hc_retained_actions:retained(Topic,C)
         % [] ->
         %     io:format("~n~nno data found")
