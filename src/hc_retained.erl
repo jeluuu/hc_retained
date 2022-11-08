@@ -80,6 +80,7 @@ on_message_publish(Message = #message{topic = <<"$SYS/", _/binary>>}, _Env) ->
     {ok, Message};
 
 on_message_publish(Message = #message{flags = #{}, headers = #{}}, _Env) ->
+    io:format("~n ----- task ------- ~n"),
     {ok,Message};
 
 on_message_publish(Message, _Env) ->
