@@ -6,7 +6,7 @@
     init/1
   % , publish/1
   , store/1
-  % , send/1
+  , send/1
   , retained/2
   ,put_chat/1
   ,get_chat/0
@@ -87,18 +87,19 @@ store(Message) ->
         
         end.
 
-% send(Message) ->
-%   io:format("~nmessage recived @ send !"),       %published by emqx payload
-%   DecodedMessage = jsx:decode(element(8,Message)),
-%   Topic = proplists:get_value(<<"to_id">>,DecodedMessage),
-%   io:format("to_id => ~p~n", [Topic]),
-%   From = proplists:get_value(<<"from">>,DecodedMessage),
-%   Message1 = proplists:get_value(<<"message">>,DecodedMessage),
-%   Qos = proplists:get_value(<<"qos">>, DecodedMessage),
-%   Data = emqx_message:make(From,Qos,Topic,Message1),
-%   emqx:publish(Data),
-%   put_chat(#{uuid => Uuid, status => <<"delivered">>}),
-%   io:format("~nmessage send to ~p~n",[Topic]).
+send(Uuid) ->                                                 %sending to message to topic when already subscribed
+  io:format("~nmessage recived @ send !"),       
+  H = get_chat(Uuid),
+  P = maps:get(message, H),
+  Qos1 = maps:get(qos, H),
+  Topic = maps:get(topic, H),
+  From1 = maps:get(from_id, H),
+  Uuid1 = maps:get(uuid, H),
+  Message = hc_retained_utils:decrypt(P),
+  Data = emqx_message:make(From1,Qos1,Topic,Message),
+  emqx:publish(Data),
+  put_chat(#{uuid => Uuid1, status => <<"delivered">>}),
+  io:format("~nmessage send to ~p~n",[Topic]).
 
 
 
