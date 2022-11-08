@@ -94,6 +94,7 @@ on_message_publish(Message, _Env) ->
     P = element(5, Message),
     case P of
         #{} -> 
+            io:format("~n ----- task ------- ~n~p ~n P = ~p~n",[Message,P]),
             {ok,Message};
         _ ->
             io:format("-------------home ---~nPublish = ~p~n", [Message]),
