@@ -10,6 +10,7 @@
   ,put_chat/1
   ,get_chat/0
   ,get_chat/1
+  ,delete_chat/1
 ]).
 
 -export([start_link/0]).
@@ -25,6 +26,11 @@ get_chat() ->
 
 get_chat(Options) when is_map(Options) ->
   tivan_server:get(?MODULE, hc_chat, Options).
+
+delete_chat(UserUuid) when is_binary(UserUuid) ->
+  delete_chat(#{uuid => UserUuid});
+delete_chat(User) when is_map(User) ->
+  tivan_server:remove(?MODULE, hc_chat, User).
 
 init([]) ->
     TableDefs = #{
