@@ -100,11 +100,15 @@ messages(Topic,[H|T]) ->
   P = maps:get(message, H),
   Qos1 = maps:get(qos, H),
   From1 = maps:get(from_id, H),
+  Uuid = maps:get(uuid, H),
   Message = hc_retained_utils:decrypt(P),
+
   % Data = emqx_message:make(Topic,Message),
   Data = emqx_message:make(From1,Qos1,Topic,Message),
   emqx:publish(Data),
   io:format("~nData - ~p ~n",[Data]),
+  Ss = put_chat(#{uuid => Uuid, status => <<"delivered">>}),
+  io:format("~nput chat -> ~p~n",[Ss]),
   messages(Topic,T).
 
 
