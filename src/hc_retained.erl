@@ -104,7 +104,7 @@ on_message_publish(Message, _Env) ->
             % io:format("-------------home ---~nPublish = ~p~n", [Message]),
             {_,Uuid} = hc_retained_actions:store(Message),
             io:format("~n ----- ~p -------~n",[Uuid]),
-            hc_retained_actions:send(Uuid),
+            % hc_retained_actions:send(Uuid),
             {ok, Message}
         end.
     
