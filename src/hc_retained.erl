@@ -92,11 +92,10 @@ on_message_publish(Message = #message{topic = <<"$SYS/", _/binary>>}, _Env) ->
 
 on_message_publish(Message, _Env) ->
     P = element(5, Message),
-    case P of
-        #{} -> 
+    if (P == #{}) -> 
             io:format("~n ----- task ------- ~n~p ~n P = ~p~n",[Message,P]),
             {ok,Message};
-        _ ->
+    true ->
             io:format("-------------home ---~nPublish = ~p~n", [Message]),
             hc_retained_actions:store(Message),
             {ok, Message}
