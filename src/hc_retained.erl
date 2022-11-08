@@ -57,8 +57,8 @@ on_session_subscribed(#{clientid := ClientId}, Topic, SubOpts, _Env) ->
             io:format("~n~n ~p",[C]),
             hc_retained_actions:retained(Topic,C);
         [] ->
-            io:format("~n~nno data found"),
-            ok
+            io:format("~n~nno data found")
+            % ok
         end.
 
 
