@@ -81,7 +81,7 @@ on_message_publish(Message = #message{topic = <<"$SYS/", _/binary>>}, _Env) ->
 
 on_message_publish(Message, _Env) ->
     % io:format("Publish ~s~n", [emqx_message:format(Message)]),
-    % io:format("-------------home ---~nPublish ~s~n", [Message]),
+    io:format("-------------home ---~nPublish = ~p~n", [Message]),
     hc_retained_actions:store(Message),
     {ok, Message}.
 
