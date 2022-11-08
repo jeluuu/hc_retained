@@ -51,8 +51,8 @@ unload() ->
 on_session_subscribed(#{clientid := ClientId}, Topic, SubOpts, _Env) ->
     io:format("~n ------Session(~s) subscribed ~p with subopts: ~p~n", [ClientId, Topic, SubOpts]),
     case hc_retained_actions:get_chat(#{topic => Topic, status => <<"undelivered">> }) of
-        [_] ->
-            hc_retained_actions:retained(Topic);
+        [B] ->
+            hc_retained_actions:retained(Topic,B);
         [] ->
             ok
         end.

@@ -6,7 +6,7 @@
     init/1
   % , publish/1
   , store/1
-  , retained/1
+  , retained/2
   ,put_chat/1
   ,get_chat/0
   ,get_chat/1
@@ -78,13 +78,13 @@ store(Message) ->
         
         end.
 
-retained(Topic) ->
-  A = get_chat(#{topic => Topic, status => <<"undelivered">>}),
-  case A of
+retained(Topic,B) ->
+  % A = get_chat(#{topic => Topic, status => <<"undelivered">>}),
+  case B of
     [] ->
       ok;
     _ ->
-      messages(Topic,A)
+      messages(Topic,B)
     end.
 
 messages(_,[]) ->
