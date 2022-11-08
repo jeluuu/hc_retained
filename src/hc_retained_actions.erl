@@ -6,6 +6,7 @@
     init/1
   % , publish/1
   , store/1
+  % , send/1
   , retained/2
   ,put_chat/1
   ,get_chat/0
@@ -80,10 +81,26 @@ store(Message) ->
                         , time => Date
                         , qos => Qos
                     },
-            put_chat(ChatOutput),
-            io:format("~ndata stored in DB")
+            P = put_chat(ChatOutput),
+            io:format("~ndata stored in DB"),
+            {ok,P}
         
         end.
+
+% send(Message) ->
+%   io:format("~nmessage recived @ send !"),       %published by emqx payload
+%   DecodedMessage = jsx:decode(element(8,Message)),
+%   Topic = proplists:get_value(<<"to_id">>,DecodedMessage),
+%   io:format("to_id => ~p~n", [Topic]),
+%   From = proplists:get_value(<<"from">>,DecodedMessage),
+%   Message1 = proplists:get_value(<<"message">>,DecodedMessage),
+%   Qos = proplists:get_value(<<"qos">>, DecodedMessage),
+%   Data = emqx_message:make(From,Qos,Topic,Message1),
+%   emqx:publish(Data),
+%   put_chat(#{uuid => Uuid, status => <<"delivered">>}),
+%   io:format("~nmessage send to ~p~n",[Topic]).
+
+
 
 retained(Topic,B) ->
   % A = get_chat(#{topic => Topic, status => <<"undelivered">>}),
