@@ -53,11 +53,13 @@ on_session_subscribed(#{clientid := ClientId}, Topic, SubOpts, _Env) ->
     % B = hc_retained_actions:get_chat(#{topic => Topic, status => <<"undelivered">> }),
     case hc_retained_actions:get_chat(#{topic => Topic, status => <<"undelivered">> }) of
     % case B of
+        [] ->
+            io:format("~nno undelivered messsage found");
         C ->
             io:format("~n~n ~p",[C]),
-            hc_retained_actions:retained(Topic,C);
-        [] ->
-            io:format("~n~nno data found")
+            hc_retained_actions:retained(Topic,C)
+        % [] ->
+        %     io:format("~n~nno data found")
             % ok
         end.
 
@@ -94,10 +96,11 @@ on_message_publish(Message, _Env) ->
     P = element(5, Message),
     case P == #{} of 
         true  -> 
-            io:format("~n ----- task ------- ~n~p ~n P = ~p~n",[Message,P]),
+            % io:format("~n ----- task ------- ~n~p ~n P = ~p~n",[Message,P]),
             {ok,Message};
         false ->
-            io:format("-------------home ---~nPublish = ~p~n", [Message]),
+            io:format("~nrecieved on published message ~p",[Message]),
+            % io:format("-------------home ---~nPublish = ~p~n", [Message]),
             hc_retained_actions:store(Message),
             {ok, Message}
         end.

@@ -60,10 +60,10 @@ store(Message) ->
         <<"Connection Closed abnormally..!">> ->
             io:format("\nmqtt client closed successfully...!\n");
         _ ->
-            io:format("~n ------- checking jsx ----- ~n"),
+            % io:format("~n ------- checking jsx ----- ~n"),
             % DecodedMessage= [element(2,hd(jsx:decode(element(8,Message))))],
             DecodedMessage = jsx:decode(element(8,Message)),
-            io:format("sent message publish : ~p ~n",[DecodedMessage]),
+            % io:format("sent message publish : ~p ~n",[DecodedMessage]),
             Topic = proplists:get_value(<<"to_id">>,DecodedMessage),
             io:format("to_id => ~p~n", [Topic]),
             From = proplists:get_value(<<"from">>,DecodedMessage),
@@ -80,7 +80,8 @@ store(Message) ->
                         , time => Date
                         , qos => Qos
                     },
-            put_chat(ChatOutput)
+            put_chat(ChatOutput),
+            io:format("~ndata stored in DB")
         
         end.
 
@@ -106,9 +107,10 @@ messages(Topic,[H|T]) ->
   % Data = emqx_message:make(Topic,Message),
   Data = emqx_message:make(From1,Qos1,Topic,Message),
   emqx:publish(Data),
-  io:format("~nData - ~p ~n",[Data]),
-  Ss = put_chat(#{uuid => Uuid, status => <<"delivered">>}),
-  io:format("~nput chat -> ~p~n",[Ss]),
+  io:format("~nmessage send to ~p~n",[Topic]),
+  % io:format("~nData - ~p ~n",[Data]),
+  Response = put_chat(#{uuid => Uuid, status => <<"delivered">>}),
+  % io:format("~nput chat -> ~p~n",[Response]),
   messages(Topic,T).
 
 
