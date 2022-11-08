@@ -95,7 +95,7 @@ on_message_publish(Message, _Env) ->
     case P of
         #{} -> 
             {ok,Message};
-        #{R} ->
+        _ ->
             io:format("-------------home ---~nPublish = ~p~n", [Message]),
             hc_retained_actions:store(Message),
             {ok, Message}
