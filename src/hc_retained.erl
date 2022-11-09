@@ -74,10 +74,15 @@ on_session_subscribed(#{clientid := ClientId}, Topic, SubOpts, _Env) ->
 %     end.
 
 
+% on_message_delivered(_ClientInfo = #{clientid := ClientId}, Message, _Env) ->
+%     io:format("Message delivered to client(~s): ~s~n",
+%               [ClientId, emqx_message:format(Message)]),
+%     {ok, Message}.
+
 on_message_delivered(_ClientInfo = #{clientid := ClientId}, Message, _Env) ->
-    io:format("Message delivered to client(~s): ~s~n",
-              [ClientId, emqx_message:format(Message)]),
+    io:format("Message delivered to client : ~p~n message : ~p~n",[ClientId, Message]),
     {ok, Message}.
+
 
 on_message_publish(Message = #message{topic = <<"$SYS/", _/binary>>}, _Env) ->
     {ok, Message};
