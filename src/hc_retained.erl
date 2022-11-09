@@ -22,6 +22,7 @@
 -export([ on_session_subscribed/4
         , on_message_delivered/3
         , on_message_publish/2
+        , on_message_acked/3
         ]).
 
 % -export([clean/1]).
@@ -39,12 +40,14 @@
 load(Env) ->
     emqx:hook('session.subscribed',  {?MODULE, on_session_subscribed, [Env]}),
     emqx:hook('message.publish',     {?MODULE, on_message_publish, [Env]}),
-    emqx:hook('message.delivered',   {?MODULE, on_message_delivered, [Env]}).
+    emqx:hook('message.delivered',   {?MODULE, on_message_delivered, [Env]}),
+    emqx:hook('message.acked',       {?MODULE, on_message_acked, [Env]}).
 
 unload() -> 
     emqx:unhook('session.subscribed',  {?MODULE, on_session_subscribed}),
     emqx:unhook('message.publish',     {?MODULE, on_message_publish}),
-    emqx:unhook('message.delivered',   {?MODULE, on_message_delivered}).
+    emqx:unhook('message.delivered',   {?MODULE, on_message_delivered}),
+    emqx:unhook('message.acked',       {?MODULE, on_message_acked}).
 
 
 
@@ -83,6 +86,11 @@ on_message_delivered(_ClientInfo = #{clientid := ClientId}, Message, _Env) ->
     io:format("Message delivered to client : ~p~n message : ~p~n",[ClientId, Message]),
     {ok, Message}.
 
+on_message_acked(#{client_id := ClientId}, Message, _Env) ->
+    io:format("Session(~s) acked message: ~s~n", [ClientId, emqx_message:format(Message)]),
+    io:format("client_id : ~p ~nmessage : ~p~n",[ClientId,Message]),
+    % voifinity_message_action:on_delivered(ClientId,Message),
+    {ok, Message}.
 
 on_message_publish(Message = #message{topic = <<"$SYS/", _/binary>>}, _Env) ->
     {ok, Message};
